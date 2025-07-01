@@ -278,12 +278,86 @@ El frontend debe implementar:
 
 ## Troubleshooting
 
+### Problemas Comunes
+
 - **401 Unauthorized**: Verificar que el token sea válido y no haya expirado
 - **JWT decode error**: Verificar que el auth service esté ejecutándose y el endpoint JWKs sea accesible
 - **Connection refused**: Verificar que ambos servicios estén ejecutándose en los puertos correctos
 - **Refresh token invalid**: El refresh token ha expirado (30 días) o ha sido revocado - reautenticación necesaria
 - **Token rotation issues**: Verificar que el frontend use el nuevo refresh token devuelto en cada renovación
 - **CORS errors**: Asegurar que el auth service permita requests desde el dominio del frontend
+
+### Error de Redirección OAuth2 (Error con PKCE)
+
+**Problema**: El frontend se redirige a `/error` después del login con parámetros OAuth2
+
+**Síntomas**:
+
+```
+http://localhost:8081/error?response_type=code&client_id=fp_frontend&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fcallback&scope=openid+profile+api.read&code_challenge=...
+```
+
+**Causas Principales**:
+
+1. **Cliente no configurado para PKCE**: El frontend usa PKCE pero el servidor no lo espera
+2. **URI de redirección incorrecta**: No coincide exactamente con la configurada
+3. **Scopes no disponibles**: Los scopes solicitados no están configurados
+4. **UserDetailsService faltante**: No hay servicio para autenticar usuarios
+
+**Soluciones Implementadas**:
+
+1. **Habilitado PKCE en ClientConfig**:
+
+   ```java
+   .clientSettings(ClientSettings.builder()
+       .requireProofKey(true) // Requerir PKCE
+       .requireAuthorizationConsent(false) // No requerir pantalla de consentimiento
+       .build())
+   ```
+
+2. **Configurado manejo de errores**:
+
+   - Endpoint `/error` personalizado con información de debug
+   - Página de error HTML con detalles técnicos
+
+3. **Agregado CustomUserDetailsService**:
+
+   - Servicio que carga usuarios desde la base de datos
+   - Integra roles con Spring Security
+
+4. **Mejorada configuración de seguridad**:
+   - Endpoints públicos correctamente configurados
+   - Form login optimizado para OAuth2
+
+**Verificación**:
+
+1. **Comprobar configuración del cliente**:
+
+   ```bash
+   # Verificar que el auth service esté corriendo
+   curl http://localhost:8081/oauth2/jwks
+   ```
+
+2. **Probar flujo completo**:
+
+   - Ir a: `http://localhost:8081/oauth2/authorize?response_type=code&client_id=fp_frontend&redirect_uri=http://localhost:3000/callback&scope=openid profile api.read&code_challenge=test&code_challenge_method=S256`
+   - Debería mostrar página de login, no error
+
+3. **Verificar logs**: Los logs del auth service mostrarán detalles del error
+
+### Debug de Errores OAuth2
+
+Para debugging, el auth service ahora incluye:
+
+- **Página de error personalizada**: Muestra detalles técnicos del error
+- **Logs detallados**: Información completa en consola
+- **Parámetros de la petición**: Todos los parámetros OAuth2 recibidos
+
+**Acceso a debug**:
+
+- Error page: `http://localhost:8081/error`
+- Health check: `http://localhost:8081/actuator/health` (si está habilitado)
+- JWK Set: `http://localhost:8081/oauth2/jwks`
 
 ## Resumen de Cambios para Refresh Tokens
 
