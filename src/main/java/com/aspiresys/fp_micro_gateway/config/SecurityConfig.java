@@ -42,6 +42,9 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.DELETE, "/product-service/**").hasRole("ADMIN")
                         // Permitir acceso público a la consulta de productos
                         .pathMatchers(HttpMethod.GET, "/product-service/products").permitAll()
+                        // Configuración específica para user-service
+                        .pathMatchers(HttpMethod.GET, "/user-service/users/hello").permitAll() // Endpoint público
+                        .pathMatchers(HttpMethod.GET, "/user-service/users/userbody").hasAnyRole("USER", "ADMIN") // Requiere autenticación
                         // Permitir solo a USER manipular sus propias órdenes y datos de usuario
                         .pathMatchers(HttpMethod.GET, "/order-service/orders/me/**").hasRole("USER") //TODO: set up /me in each service.
                         .pathMatchers(HttpMethod.POST, "/order-service/orders/me/**").hasRole("USER")
