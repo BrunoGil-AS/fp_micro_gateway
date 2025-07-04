@@ -31,29 +31,40 @@ public class SecurityConfig {
                         .pathMatchers("/auth/**").permitAll()
                         // Permitir acceso a endpoints de actuator para health checks
                         .pathMatchers("/actuator/**").permitAll()
-                        // Permitir acceso público al health check público
+                        
+                        // === GATEWAY HEALTH ENDPOINTS ===
                         .pathMatchers("/gateway/health/public").permitAll()
-                        // Permitir acceso a health check solo a ADMIN
-                        .pathMatchers("/gateway/health").hasRole("ADMIN")
                         .pathMatchers("/gateway/health/user").hasAnyRole("USER", "ADMIN")
-                        // Permitir solo a Admin publicar, editar y eliminar productos en el product service
+                        .pathMatchers("/gateway/health").hasRole("ADMIN")
+                        
+                        // === PRODUCT SERVICE ENDPOINTS ===
+                        // Permitir acceso público a la consulta de productos (más específico primero)
+                        .pathMatchers(HttpMethod.GET, "/product-service/products/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/product-service/products").permitAll()
+                        // Permitir solo a ADMIN crear, actualizar y eliminar productos
                         .pathMatchers(HttpMethod.POST, "/product-service/**").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.PUT, "/product-service/**").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.DELETE, "/product-service/**").hasRole("ADMIN")
-                        // Permitir acceso público a la consulta de productos
-                        .pathMatchers(HttpMethod.GET, "/product-service/products").permitAll()
-                        // Configuración específica para user-service
-                        .pathMatchers(HttpMethod.GET, "/user-service/users/hello").permitAll() // Endpoint público
-                        .pathMatchers(HttpMethod.GET, "/user-service/users/userbody").hasAnyRole("USER", "ADMIN") // Requiere autenticación
-                        // Permitir solo a USER manipular sus propias órdenes y datos de usuario
-                        .pathMatchers(HttpMethod.GET, "/order-service/orders/me/**").hasRole("USER") //TODO: set up /me in each service.
-                        .pathMatchers(HttpMethod.POST, "/order-service/orders/me/**").hasRole("USER")
-                        .pathMatchers(HttpMethod.PUT, "/order-service/orders/me/**").hasRole("USER")
-                        .pathMatchers(HttpMethod.DELETE, "/order-service/orders/me/**").hasRole("USER")
+                        
+                        // === USER SERVICE ENDPOINTS ===
+                        // Endpoint público hello
+                        .pathMatchers(HttpMethod.GET, "/user-service/users/hello").permitAll()
+                        // Endpoints específicos del usuario autenticado (/me/**)
                         .pathMatchers(HttpMethod.GET, "/user-service/users/me/**").hasRole("USER")
                         .pathMatchers(HttpMethod.POST, "/user-service/users/me/**").hasRole("USER")
                         .pathMatchers(HttpMethod.PUT, "/user-service/users/me/**").hasRole("USER")
                         .pathMatchers(HttpMethod.DELETE, "/user-service/users/me/**").hasRole("USER")
+                        
+                        // === ORDER SERVICE ENDPOINTS ===
+                        // Permitir solo a USER manipular sus propias órdenes (/me/**)
+                        .pathMatchers(HttpMethod.GET, "/order-service/orders/me").hasRole("USER")
+                        .pathMatchers(HttpMethod.POST, "/order-service/orders/me").hasRole("USER")
+                        .pathMatchers(HttpMethod.PUT, "/order-service/orders/me").hasRole("USER")
+                        .pathMatchers(HttpMethod.DELETE, "/order-service/orders/me").hasRole("USER")
+                        // Endpoints administrativos - consulta general de órdenes solo para ADMIN
+                        .pathMatchers(HttpMethod.GET, "/order-service/orders").hasRole("ADMIN") // Public endpoint for orders, only accessible by ADMIN
+                        .pathMatchers(HttpMethod.GET, "/order-service/orders/find").hasRole("ADMIN")
+                        
                         // Cualquier otra petición requiere autenticación
                         .anyExchange().authenticated()
                 )
