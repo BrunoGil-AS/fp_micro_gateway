@@ -57,10 +57,10 @@ public class SecurityConfig {
                         
                         // === ORDER SERVICE ENDPOINTS ===
                         // Permitir solo a USER manipular sus propias órdenes (/me/**)
-                        .pathMatchers(HttpMethod.GET, "/order-service/orders/me").hasRole("USER")
-                        .pathMatchers(HttpMethod.POST, "/order-service/orders/me").hasRole("USER")
-                        .pathMatchers(HttpMethod.PUT, "/order-service/orders/me").hasRole("USER")
-                        .pathMatchers(HttpMethod.DELETE, "/order-service/orders/me").hasRole("USER")
+                        .pathMatchers(HttpMethod.GET, "/order-service/orders/me/**").hasRole("USER")
+                        .pathMatchers(HttpMethod.POST, "/order-service/orders/me/**").hasRole("USER")
+                        .pathMatchers(HttpMethod.PUT, "/order-service/orders/me/**").hasRole("USER")
+                        .pathMatchers(HttpMethod.DELETE, "/order-service/orders/me/**").hasRole("USER")
                         // Endpoints administrativos - consulta general de órdenes solo para ADMIN
                         .pathMatchers(HttpMethod.GET, "/order-service/orders").hasRole("ADMIN") // Public endpoint for orders, only accessible by ADMIN
                         .pathMatchers(HttpMethod.GET, "/order-service/orders/find").hasRole("ADMIN")
