@@ -37,3 +37,5 @@ build/
 logs/
 **/logs/
 **/*.log
+
+registers/
