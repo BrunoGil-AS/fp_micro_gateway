@@ -2,18 +2,20 @@ package com.aspiresys.fp_micro_gateway.config.security;
 
 
 /**
- * Gateway Constants Class
- * 
- * This final utility class contains all the constant values used throughout the 
- * microservices gateway configuration. It defines allowed HTTP methods, headers,
- * endpoint patterns, and role definitions for security and routing purposes.
- * 
- * The class includes:
- * - HTTP methods and headers configuration for CORS
- * - Public and protected endpoint patterns for different microservices
- * - Role definitions for authorization
- * 
- * @author System
+ * <h1>GatewayConstants</h1>
+ * <p>
+ * Utility class containing constant values used in the microservices gateway configuration.
+ * Defines allowed HTTP methods, headers, endpoint patterns, and role definitions for security and routing.
+ * </p>
+ *
+ * <h2>Features:</h2>
+ * <ul>
+ *   <li>HTTP methods and headers configuration for CORS</li>
+ *   <li>Public and protected endpoint patterns for different microservices</li>
+ *   <li>Role definitions for authorization</li>
+ * </ul>
+ *
+ * @author Bruno Gil
  * @version 1.0
  * @since 1.0
  */
