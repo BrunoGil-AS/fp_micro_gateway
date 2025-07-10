@@ -2,6 +2,7 @@ package com.aspiresys.fp_micro_gateway.config;
 
 import com.aspiresys.fp_micro_gateway.filter.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -13,13 +14,16 @@ public class GatewayConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Value("${service.env.auth.server}")
+        private String authServerUrl;
+
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 // Ruta para el servicio de autenticación (sin autenticación)
                 .route("auth-service", r -> r
                         .path("/auth/**")
-                        .uri("http://localhost:8081"))
+                        .uri(authServerUrl)) // URL del servicio de autenticación
                 
                 // Ruta para otros microservicios (con autenticación JWT)
                 .route("authenticated-services", r -> r

@@ -1,5 +1,6 @@
 package com.aspiresys.fp_micro_gateway.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
+
+    @Value("${service.env.frontend.server}")
+    private String frontendUrl;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -123,7 +127,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         
         // Permitir el origen del frontend
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
         
         // Permitir todos los métodos HTTP necesarios
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
