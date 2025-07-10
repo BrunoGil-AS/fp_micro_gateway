@@ -20,6 +20,41 @@ import java.util.stream.Collectors;
 
 import static com.aspiresys.fp_micro_gateway.config.security.GatewayConstants.*;
 
+
+/**
+ * Spring Security configuration class for the microservices gateway.
+ * 
+ * This configuration class sets up reactive security for a Spring WebFlux gateway application,
+ * providing JWT-based authentication and role-based authorization for various microservice endpoints.
+ * 
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>JWT OAuth2 resource server configuration</li>
+ *   <li>Role-based access control (USER and ADMIN roles)</li>
+ *   <li>CORS configuration for frontend integration</li>
+ *   <li>Endpoint-specific security rules for different microservices</li>
+ * </ul>
+ * 
+ * <p>Protected services include:</p>
+ * <ul>
+ *   <li><strong>Product Service:</strong> Public read access, admin-only write operations</li>
+ *   <li><strong>User Service:</strong> User role required for personal data operations</li>
+ *   <li><strong>Order Service:</strong> User role for personal orders, admin role for all orders</li>
+ *   <li><strong>Gateway Health:</strong> Role-based health check access</li>
+ * </ul>
+ * 
+ * <p>The JWT authentication converter extracts roles from JWT claims including 'authorities',
+ * 'roles', or 'scope' fields and automatically prefixes them with 'ROLE_' for Spring Security
+ * compatibility.</p>
+ * 
+ * <p>CORS is configured to allow requests from the configured frontend URL with credentials
+ * support for seamless frontend-backend communication.</p>
+ * 
+ * @author Bruno Gil
+ * @since 1.0
+ * @see org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
+ * @see org.springframework.security.config.web.server.SecurityWebFilterChain
+ */
 @Configuration
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
@@ -37,31 +72,29 @@ public class SecurityConfig {
                         .pathMatchers(PUBLIC_AUTH_ENDPOINTS).permitAll()
                         .pathMatchers(PUBLIC_ACTUATOR_ENDPOINTS).permitAll()
                         .pathMatchers(PUBLIC_GATEWAY_HEALTH).permitAll()
-                        .pathMatchers("/gateway/health/user").hasAnyRole(ROLE_USER, ROLE_ADMIN)
-                        .pathMatchers("/gateway/health").hasRole(ROLE_ADMIN)
+                        .pathMatchers(GATEWAY_HEALTH_USER).hasAnyRole(ROLE_USER, ROLE_ADMIN)
+                        .pathMatchers(GATEWAY_HEALTH_ADMIN).hasRole(ROLE_ADMIN)
 
                         // PRODUCT SERVICE ENDPOINTS
                         .pathMatchers(HttpMethod.GET, PUBLIC_PRODUCT_ENDPOINTS).permitAll()
-                        .pathMatchers(HttpMethod.POST, "/product-service/**").hasRole(ROLE_ADMIN)
-                        .pathMatchers(HttpMethod.PUT, "/product-service/**").hasRole(ROLE_ADMIN)
-                        .pathMatchers(HttpMethod.DELETE, "/product-service/**").hasRole(ROLE_ADMIN)
+                        .pathMatchers(HttpMethod.POST, PRODUCT_SERVICE_BASE).hasRole(ROLE_ADMIN)
+                        .pathMatchers(HttpMethod.PUT, PRODUCT_SERVICE_BASE).hasRole(ROLE_ADMIN)
+                        .pathMatchers(HttpMethod.DELETE, PRODUCT_SERVICE_BASE).hasRole(ROLE_ADMIN)
 
                         // USER SERVICE ENDPOINTS
                         .pathMatchers(HttpMethod.GET, PUBLIC_USER_HELLO_ENDPOINT).permitAll()
-                        .pathMatchers(HttpMethod.GET, "/user-service/users/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.POST, "/user-service/users/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.PUT, "/user-service/users/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.DELETE, "/user-service/users/me/**").hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.GET, USER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.POST, USER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.PUT, USER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.DELETE, USER_SERVICE_ME_BASE).hasRole(ROLE_USER)
 
                         // ORDER SERVICE ENDPOINTS
-                        .pathMatchers(HttpMethod.GET, "/order-service/orders/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.POST, "/order-service/orders/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.PUT, "/order-service/orders/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.DELETE, "/order-service/orders/me/**").hasRole(ROLE_USER)
-                        .pathMatchers(HttpMethod.GET, "/order-service/orders").hasRole(ROLE_ADMIN)
-                        .pathMatchers(HttpMethod.GET, "/order-service/orders/find").hasRole(ROLE_ADMIN)
-
-                        // Cualquier otra petición requiere autenticación
+                        .pathMatchers(HttpMethod.GET, ORDER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.POST, ORDER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.PUT, ORDER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.DELETE, ORDER_SERVICE_ME_BASE).hasRole(ROLE_USER)
+                        .pathMatchers(HttpMethod.GET, ORDER_SERVICE_ORDERS).hasRole(ROLE_ADMIN)
+                        .pathMatchers(HttpMethod.GET, ORDER_SERVICE_FIND).hasRole(ROLE_ADMIN)
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -71,8 +104,8 @@ public class SecurityConfig {
     }
 
     /**
-     * Configuración del convertidor de autenticación JWT para extraer roles/authorities.
-     * Extrae los roles del claim 'authorities' o 'roles' del JWT.
+     * Configuration of the JWT authentication converter to extract roles/authorities.
+     * Extracts roles from the 'authorities' or 'roles' claim of the JWT.
      */
     @Bean
     public ReactiveJwtAuthenticationConverterAdapter jwtAuthenticationConverter() {
@@ -100,8 +133,8 @@ public class SecurityConfig {
     }
 
     /**
-     * Configuración CORS para permitir el acceso desde el frontend.
-     * Permite requests desde http://localhost:3000 (React frontend).
+     * CORS configuration to allow access from the frontend.
+     * Allows requests from React frontend.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

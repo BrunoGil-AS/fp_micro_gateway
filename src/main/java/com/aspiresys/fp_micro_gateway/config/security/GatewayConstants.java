@@ -1,25 +1,59 @@
 package com.aspiresys.fp_micro_gateway.config.security;
 
+
 /**
- * Constantes usadas en la configuración de seguridad y gateway.
+ * Gateway Constants Class
+ * 
+ * This final utility class contains all the constant values used throughout the 
+ * microservices gateway configuration. It defines allowed HTTP methods, headers,
+ * endpoint patterns, and role definitions for security and routing purposes.
+ * 
+ * The class includes:
+ * - HTTP methods and headers configuration for CORS
+ * - Public and protected endpoint patterns for different microservices
+ * - Role definitions for authorization
+ * 
+ * @author System
+ * @version 1.0
+ * @since 1.0
  */
 public final class GatewayConstants {
     private GatewayConstants() {}
 
-    // Métodos HTTP permitidos
+    /**
+     * Allowed HTTP methods for CORS.
+     */
     public static final String[] ALLOWED_METHODS = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
 
-    // Headers permitidos
+    /**
+     * Allowed headers for CORS
+     */
     public static final String[] ALLOWED_HEADERS = {"*"};
 
-    // Rutas públicas
+    // === ENDPOINTS ===
+    // Auth
     public static final String[] PUBLIC_AUTH_ENDPOINTS = {"/auth/**"};
+    // Actuator
     public static final String[] PUBLIC_ACTUATOR_ENDPOINTS = {"/actuator/**"};
-    public static final String[] PUBLIC_PRODUCT_ENDPOINTS = {"/product-service/products/**", "/product-service/products"};
-    public static final String[] PUBLIC_USER_HELLO_ENDPOINT = {"/user-service/users/hello"};
+    // Gateway health
     public static final String[] PUBLIC_GATEWAY_HEALTH = {"/gateway/health/public"};
+    public static final String GATEWAY_HEALTH_USER = "/gateway/health/user";
+    public static final String GATEWAY_HEALTH_ADMIN = "/gateway/health";
 
-    // Roles
+    // Product Service
+    public static final String[] PUBLIC_PRODUCT_ENDPOINTS = {"/product-service/products/**", "/product-service/products"};
+    public static final String PRODUCT_SERVICE_BASE = "/product-service/**";
+
+    // User Service
+    public static final String[] PUBLIC_USER_HELLO_ENDPOINT = {"/user-service/users/hello"};
+    public static final String USER_SERVICE_ME_BASE = "/user-service/users/me/**";
+
+    // Order Service
+    public static final String ORDER_SERVICE_ME_BASE = "/order-service/orders/me/**";
+    public static final String ORDER_SERVICE_ORDERS = "/order-service/orders";
+    public static final String ORDER_SERVICE_FIND = "/order-service/orders/find";
+
+    // === ROLES ===
     public static final String ROLE_USER = "USER";
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_PREFIX = "ROLE_";
