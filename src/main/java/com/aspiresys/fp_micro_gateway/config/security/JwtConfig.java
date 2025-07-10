@@ -1,4 +1,4 @@
-package com.aspiresys.fp_micro_gateway.config;
+package com.aspiresys.fp_micro_gateway.config.security;
 
 import org.springframework.context.annotation.Configuration;
 
