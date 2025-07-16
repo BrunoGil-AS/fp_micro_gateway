@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.security.oauth2.jwt.Jwt;
-import java.time.Instant;
+
 import java.util.List;
-import java.util.Map;
+
 import com.aspiresys.fp_micro_gateway.config.SecurityConfig;
 import com.aspiresys.fp_micro_gateway.config.TestSecurityConfig;
-import org.springframework.test.context.ContextConfiguration;
+
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
