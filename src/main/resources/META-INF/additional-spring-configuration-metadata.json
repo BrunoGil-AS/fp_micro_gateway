@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "service.env.auth.server",
+      "type": "java.lang.String",
+      "description": "The URL of the authentication server",
+      "defaultValue": "http://localhost:8081"
+    },
+    {
+      "name": "service.env.frontend.server",
+      "type": "java.lang.String",
+      "description": "The URL of the frontend server",
+      "defaultValue": "http://localhost:3000"
+    }
+  ]
+}

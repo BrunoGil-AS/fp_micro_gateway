@@ -20,6 +20,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/gateway")
 public class GatewayTestController {
 
+    /**
+     * Test endpoint to verify JWT authentication.
+     * <p>
+     * Requires the user to have the 'USER' role.
+     * Returns a JSON object indicating authentication status, the user's subject,
+     * roles, and a message.
+     *
+     * @param jwt the authenticated user's JWT token, or null if unauthenticated
+     * @return a Mono containing a map with authentication details
+     */
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/test")
     public Mono<Map<String, Object>> test(@AuthenticationPrincipal Jwt jwt) {
@@ -39,8 +49,14 @@ public class GatewayTestController {
     }
 
     /**
-     * Endpoint de health check que requiere rol ADMIN.
-     * Utilizado para verificar que la autorización basada en roles funciona correctamente.
+     * Health check endpoint for administrators.
+     * <p>
+     * Requires the user to have the 'ADMIN' role.
+     * Returns a JSON object with service status, timestamp, service name,
+     * authenticated user's name, authorities, and a message.
+     *
+     * @param authentication the authentication object containing user details
+     * @return a Mono containing a ResponseEntity with health check information
      */
     @GetMapping("/health")
     @PreAuthorize("hasRole('ADMIN')")
@@ -57,7 +73,12 @@ public class GatewayTestController {
     }
 
     /**
-     * Endpoint de health check público para verificación básica.
+     * Public health check endpoint.
+     * <p>
+     * Does not require authentication.
+     * Returns a JSON object with service status, timestamp, service name, and a message.
+     *
+     * @return a Mono containing a ResponseEntity with public health check information
      */
     @GetMapping("/health/public")
     public Mono<ResponseEntity<Map<String, Object>>> publicHealthCheck() {
@@ -71,7 +92,14 @@ public class GatewayTestController {
     }
 
     /**
-     * Endpoint que requiere cualquier usuario autenticado.
+     * Health check endpoint for users and administrators.
+     * <p>
+     * Requires the user to have either the 'USER' or 'ADMIN' role.
+     * Returns a JSON object with service status, timestamp, service name,
+     * authenticated user's name, authorities, and a message.
+     *
+     * @param authentication the authentication object containing user details
+     * @return a Mono containing a ResponseEntity with health check information
      */
     @GetMapping("/health/user")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")

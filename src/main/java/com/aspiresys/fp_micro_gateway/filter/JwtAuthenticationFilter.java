@@ -9,6 +9,32 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+/**
+ * <p>
+ * <strong>JwtAuthenticationFilter</strong> is a custom Spring Cloud Gateway filter that intercepts incoming HTTP requests
+ * to validate JWT tokens present in the <code>Authorization</code> header. If a valid Bearer token is found, it decodes
+ * the JWT using a <code>ReactiveJwtDecoder</code> and extracts user information such as user ID and roles. These details
+ * are then added as custom headers (<code>X-User-Id</code> and <code>X-User-Roles</code>) to the request, making them available
+ * to downstream microservices. If the token is invalid, the filter responds with HTTP 401 Unauthorized.
+ * If no Authorization header is present, the request proceeds without authentication.
+ * </p>
+ *
+ * <h3>Usage:</h3>
+ * <ul>
+ *   <li>Place this filter in the Spring Cloud Gateway filter chain to enable JWT-based authentication and
+ *   user context propagation.</li>
+ * </ul>
+ *
+ * <h3>Dependencies:</h3>
+ * <ul>
+ *   <li>Requires a <code>ReactiveJwtDecoder</code> bean to be available in the application context.</li>
+ * </ul>
+ *
+ * <h3>Configuration:</h3>
+ * <ul>
+ *   <li>The filter can be configured via the nested static <code>Config</code> class if needed.</li>
+ * </ul>
+ */
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
@@ -51,7 +77,26 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         };
     }
 
+    /**
+     * Configuration class for JwtAuthenticationFilter.
+     * <p>
+     * This class can be used to define additional configuration properties for the filter if needed.
+     * Currently, it does not contain any properties but serves as a placeholder for future enhancements.
+     * </p>
+     * <h3>Usage:</h3>
+     * <ul>
+     *  <li>Can be used to define custom properties for the filter in the application configuration.</li>
+     * </ul>
+     * <h3>Example:</h3>
+     * <pre>
+     * JwtAuthenticationFilter.Config config = new JwtAuthenticationFilter.Config();
+     * // Set properties if needed
+     * </pre>
+     * <p>
+     * Note: Currently, this class does not have any configurable properties.
+     * </p>
+     */
     public static class Config {
-        // Configuración del filtro si es necesaria
+        
     }
 }
