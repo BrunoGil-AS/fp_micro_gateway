@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.List;
 
-import com.aspiresys.fp_micro_gateway.config.SecurityConfig;
+import com.aspiresys.fp_micro_gateway.config.security.SecurityConfig;
 import com.aspiresys.fp_micro_gateway.config.TestSecurityConfig;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
