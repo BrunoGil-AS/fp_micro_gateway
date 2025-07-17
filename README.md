@@ -323,7 +323,7 @@ This configuration:
 
 ### 4. JWT Authentication Filter
 
-**File**: `src/main/java/com/aspiresys/fp_micro_gateway/filter/JwtAuthenticationFilter.java`
+**File**: [`JwtAuthenticationFilter.java`](src/main/java/com/aspiresys/fp_micro_gateway/filter/JwtAuthenticationFilter.java)
 
 ```java
 @Component
