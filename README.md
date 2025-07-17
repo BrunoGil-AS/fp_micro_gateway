@@ -68,7 +68,7 @@ This gateway acts as a reverse proxy, routing requests to appropriate microservi
 
 ### Core Application Properties
 
-The main configuration is located in `src/main/resources/application.properties`:
+The main configuration is located in [`application.properties`](src/main/resources/application.properties):
 
 ```properties
 spring.application.name=fp_micro_gateway
@@ -84,7 +84,7 @@ logging.level.org.springframework.cloud=DEBUG
 
 ### External Configuration
 
-The external configuration is managed via Config Server in `fp_micro_gateway.properties`:
+The external configuration is managed via Config Server in [`fp_micro_gateway.properties`](src/main/resources/fp_micro_gateway.properties):
 
 ```properties
 # Server Configuration
