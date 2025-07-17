@@ -834,10 +834,3 @@ cors.allowed-origins=https://yourdomain.com,https://app.yourdomain.com
 3. Update documentation for configuration changes
 4. Ensure security best practices are maintained
 5. Test with all dependent services
-
-## References
-
-- [Spring Cloud Gateway Documentation](https://docs.spring.io/spring-cloud-gateway/docs/current/reference/html/)
-- [Spring Security OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/)
-- [Spring Cloud Netflix Documentation](https://docs.spring.io/spring-cloud-netflix/docs/current/reference/html/)
-- [Spring Boot Actuator Guide](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html)
