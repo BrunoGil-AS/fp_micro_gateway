@@ -45,12 +45,25 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         super(Config.class);
     }
 
+    /**
+     * This method applies the JWT authentication logic to the incoming request.
+     * <p> It checks for the presence of an Authorization header,
+     * validates the JWT token, and extracts user information to add to the request headers.
+     * If the token is invalid, it responds with HTTP 401 Unauthorized. </p>
+     * 
+     * @param config The configuration for the filter, which can be used to set properties if needed.
+     * @return A GatewayFilter that processes the request and applies JWT authentication.
+     * <h3>Note:</h3>
+     * <p>This method is invoked for each request passing through the gateway.
+     * It is responsible for applying the JWT authentication logic and modifying the request as needed.
+     * </p>
+     */
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+            // Check for Authorization header
             String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             
-            // Si no hay header de autorización, continuar sin autenticación
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return chain.filter(exchange);
             }
