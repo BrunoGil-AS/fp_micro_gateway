@@ -30,7 +30,8 @@ public class GatewayTestController {
      * @param jwt the authenticated user's JWT token, or null if unauthenticated
      * @return a Mono containing a map with authentication details
      */
-    @PreAuthorize("hasRole('USER')")
+    
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/test")
     public Mono<Map<String, Object>> test(@AuthenticationPrincipal Jwt jwt) {
         if (jwt == null) {
