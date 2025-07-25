@@ -8,10 +8,12 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import reactor.core.publisher.Mono;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import java.util.List;
 
 
 @TestConfiguration
+@EnableReactiveMethodSecurity
 public class TestSecurityConfig {
 
     @Bean
@@ -38,7 +40,7 @@ public class TestSecurityConfig {
                 .pathMatchers("/gateway/health/public").permitAll()
                 .anyExchange().authenticated()
             )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}))
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtDecoder(mockJwtDecoder())))
             .build();
     }
 }

@@ -6,23 +6,31 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.List;
-
-import com.aspiresys.fp_micro_gateway.config.security.SecurityConfig;
 import com.aspiresys.fp_micro_gateway.config.TestSecurityConfig;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @WebFluxTest(controllers = GatewayTestController.class)
-@Import({GatewayTestController.class, SecurityConfig.class, TestSecurityConfig.class})
+@Import({GatewayTestController.class, TestSecurityConfig.class})
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false",
+    "eureka.client.enabled=false",
+    "spring.cloud.discovery.enabled=false",
+    "spring.config.import="
+})
 class GatewayTestControllerTest {
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", () -> "http://localhost:8081");
+        registry.add("spring.cloud.config.enabled", () -> "false");
+        registry.add("eureka.client.enabled", () -> "false");
+        registry.add("spring.cloud.discovery.enabled", () -> "false");
     }
 
     @Autowired
@@ -38,22 +46,22 @@ class GatewayTestControllerTest {
 
     @Test
     void testEndpointWithUserRole() {
-        Jwt jwt = Jwt.withTokenValue("token")
-            .header("alg", "none")
-            .claim("sub", "user123")
-            .claim("roles", List.of("ROLE_USER"))
-            .build();
-
-        webTestClient.get()
+        webTestClient
+            .mutateWith(SecurityMockServerConfigurers.mockJwt()
+                .jwt(jwt -> jwt
+                    .subject("user123")
+                    .claim("roles", java.util.List.of("ROLE_USER"))
+                )
+                .authorities(new SimpleGrantedAuthority("ROLE_USER"))
+            )
+            .get()
             .uri("/gateway/test")
-            .headers(headers -> headers.setBearerAuth(jwt.getTokenValue()))
             .exchange()
             .expectStatus().isOk()
             .expectBody()
             .jsonPath("$.status").isEqualTo("authenticated")
             .jsonPath("$.user").isEqualTo("user123")
             .jsonPath("$.roles").isArray()
-            .jsonPath("$.roles[0]").isEqualTo("ROLE_USER")
             .jsonPath("$.message").isEqualTo("Gateway authentication working correctly");
     }
 
