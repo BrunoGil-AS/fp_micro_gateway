@@ -72,24 +72,25 @@ The main configuration is located in [`application.properties`](src/main/resourc
 
 ```properties
 spring.application.name=fp_micro_gateway
-
-# Config client configuration
-spring.config.import=optional:configserver:http://localhost:8888
-
-# Debug logging for gateway
-logging.level.org.springframework.cloud.gateway=DEBUG
-logging.level.org.springframework.web=DEBUG
-logging.level.org.springframework.cloud=DEBUG
 ```
+
+The profile of development includes configuration to config server and is located in [`application-dev.properties`](src/main/resources/application-dev.properties):
 
 ### External Configuration
 
-The external configuration is managed via Config Server in [`fp_micro_gateway.properties`](src/main/resources/fp_micro_gateway.properties):
+The external configuration is managed via Config Server in [`fp_micro_gateway.properties`](../fp_files_configproperties/gateway/fp_micro_gateway.properties):
 
 ```properties
 # Server Configuration
 server.port=8080
 spring.application.name=gateway-service
+```
+
+The application properties also have a profile segmentation to run depending on the environment:
+
+The [`fp_micro_gateway-dev.properties`](../fp_files_configproperties/gateway/fp_micro_gateway-dev.properties) which includes:
+
+```properties
 
 # Eureka Client Configuration
 eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
